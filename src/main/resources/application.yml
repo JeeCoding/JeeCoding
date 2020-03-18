@@ -17,3 +17,7 @@ mybatis:
   mapper-locations:
     - classpath:mapper/*Mapper.xml
 #    - classpath*:com/**/mbg/*.xml
+pagehelper:
+  helper-dialect: mysql
+  reasonable: true
+  support-methods-arguments: true
