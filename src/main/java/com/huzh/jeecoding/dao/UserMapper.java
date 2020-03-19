@@ -1,8 +1,10 @@
 package com.huzh.jeecoding.dao;
 
+import com.github.pagehelper.Page;
 import com.huzh.jeecoding.entity.User;
-import java.util.List;
+import org.apache.ibatis.annotations.Mapper;
 
+@Mapper
 public interface UserMapper {
     int deleteByPrimaryKey(String id);
 
@@ -10,7 +12,9 @@ public interface UserMapper {
 
     User selectByPrimaryKey(String id);
 
-    List<User> selectAll();
+    User getUserByName(String username);
+
+    Page<User> selectAll();
 
     int updateByPrimaryKey(User record);
 }

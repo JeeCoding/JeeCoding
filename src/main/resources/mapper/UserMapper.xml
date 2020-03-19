@@ -36,6 +36,11 @@
     from sys_user
     where id = #{id,jdbcType=VARCHAR}
   </select>
+  <select id="getUserByName" parameterType="java.lang.String" resultMap="BaseResultMap">
+    select id, `name`, pass_word, salt, `state`, user_name
+    from sys_user
+    where user_name = #{userName,jdbcType=VARCHAR}
+  </select>
   <select id="selectAll" resultMap="BaseResultMap">
     select id, `name`, pass_word, salt, `state`, user_name
     from sys_user

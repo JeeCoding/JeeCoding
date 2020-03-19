@@ -1,6 +1,7 @@
 package com.huzh.jeecoding.entity;
 
 import java.io.Serializable;
+import java.util.List;
 
 public class Role implements Serializable {
     private String id;
@@ -12,6 +13,25 @@ public class Role implements Serializable {
     private String role;
 
     private static final long serialVersionUID = 1L;
+    private List<Permission> permissions;
+
+    public List<Permission> getPermissions() {
+        return permissions;
+    }
+
+    public void setPermissions(List<Permission> permissions) {
+        this.permissions = permissions;
+    }
+
+    public List<User> getUsers() {
+        return users;
+    }
+
+    public void setUsers(List<User> users) {
+        this.users = users;
+    }
+
+    private List<User> users;
 
     public String getId() {
         return id;

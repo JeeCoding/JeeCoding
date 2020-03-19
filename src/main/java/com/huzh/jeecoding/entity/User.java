@@ -1,8 +1,12 @@
 package com.huzh.jeecoding.entity;
 
 import java.io.Serializable;
+import java.util.List;
 
 public class User implements Serializable {
+
+    private static final long serialVersionUID = 1L;
+
     private String id;
 
     private String name;
@@ -15,7 +19,15 @@ public class User implements Serializable {
 
     private String userName;
 
-    private static final long serialVersionUID = 1L;
+    private List<Role> roles;
+
+    public List<Role> getRoles() {
+        return roles;
+    }
+
+    public void setRoles(List<Role> roles) {
+        this.roles = roles;
+    }
 
     public String getId() {
         return id;
@@ -65,6 +77,9 @@ public class User implements Serializable {
         this.userName = userName == null ? null : userName.trim();
     }
 
+    public String getCredentialsSalt() {
+        return this.userName + this.salt;
+    }
     @Override
     public String toString() {
         StringBuilder sb = new StringBuilder();
