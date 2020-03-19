@@ -3,56 +3,66 @@ package com.huzh.jeecoding.entity;
 import java.io.Serializable;
 
 public class User implements Serializable {
-    private Long id;
+    private String id;
 
-    private String username;
+    private String name;
 
-    private String password;
+    private String passWord;
 
-    private String userSex;
+    private String salt;
 
-    private String nickName;
+    private Byte state;
+
+    private String userName;
 
     private static final long serialVersionUID = 1L;
 
-    public Long getId() {
+    public String getId() {
         return id;
     }
 
-    public void setId(Long id) {
-        this.id = id;
+    public void setId(String id) {
+        this.id = id == null ? null : id.trim();
     }
 
-    public String getUsername() {
-        return username;
+    public String getName() {
+        return name;
     }
 
-    public void setUsername(String username) {
-        this.username = username == null ? null : username.trim();
+    public void setName(String name) {
+        this.name = name == null ? null : name.trim();
     }
 
-    public String getPassword() {
-        return password;
+    public String getPassWord() {
+        return passWord;
     }
 
-    public void setPassword(String password) {
-        this.password = password == null ? null : password.trim();
+    public void setPassWord(String passWord) {
+        this.passWord = passWord == null ? null : passWord.trim();
     }
 
-    public String getUserSex() {
-        return userSex;
+    public String getSalt() {
+        return salt;
     }
 
-    public void setUserSex(String userSex) {
-        this.userSex = userSex == null ? null : userSex.trim();
+    public void setSalt(String salt) {
+        this.salt = salt == null ? null : salt.trim();
     }
 
-    public String getNickName() {
-        return nickName;
+    public Byte getState() {
+        return state;
     }
 
-    public void setNickName(String nickName) {
-        this.nickName = nickName == null ? null : nickName.trim();
+    public void setState(Byte state) {
+        this.state = state;
+    }
+
+    public String getUserName() {
+        return userName;
+    }
+
+    public void setUserName(String userName) {
+        this.userName = userName == null ? null : userName.trim();
     }
 
     @Override
@@ -62,10 +72,11 @@ public class User implements Serializable {
         sb.append(" [");
         sb.append("Hash = ").append(hashCode());
         sb.append(", id=").append(id);
-        sb.append(", username=").append(username);
-        sb.append(", password=").append(password);
-        sb.append(", userSex=").append(userSex);
-        sb.append(", nickName=").append(nickName);
+        sb.append(", name=").append(name);
+        sb.append(", passWord=").append(passWord);
+        sb.append(", salt=").append(salt);
+        sb.append(", state=").append(state);
+        sb.append(", userName=").append(userName);
         sb.append(", serialVersionUID=").append(serialVersionUID);
         sb.append("]");
         return sb.toString();

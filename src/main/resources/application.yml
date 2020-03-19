@@ -5,6 +5,18 @@ spring:
     url: jdbc:mysql://localhost:3306/JeeCoding?useUnicode=true&characterEncoding=utf-8&serverTimezone=Asia/Shanghai
     username: root
     password: 123456
+  redis:
+    database: 0
+    host: localhost
+    port: 6379
+    password:
+    timeout: 3000ms
+    lettuce:
+      pool:
+        max-active: 8
+        max-wait: -1ms
+        max-idle: 8
+        min-idle: 0
 
 mybatis:
  #\u8FD9\u4E2A\u914D\u7F6E\u7528\u6765\u6307\u5B9Abean\u5728\u54EA\u4E2A\u5305\u91CC\uFF0C\u907F\u514D\u5B58\u5728\u540C\u540Dclass\u65F6\u627E\u4E0D\u5230bean
@@ -15,9 +27,10 @@ mybatis:
   config-location: classpath:mbg/mybatis-config.xml
   ## dao xml \u6587\u4EF6\u5730\u5740
   mapper-locations:
-    - classpath:mapper/*Mapper.xml
+    - classpath:dao/*Mapper.xml
 #    - classpath*:com/**/mbg/*.xml
 pagehelper:
   helper-dialect: mysql
   reasonable: true
   support-methods-arguments: true
+  params: count=countSql
