@@ -9,13 +9,11 @@ import org.apache.shiro.spring.web.ShiroFilterFactoryBean;
 import org.apache.shiro.web.mgt.DefaultWebSecurityManager;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.web.servlet.handler.SimpleMappingExceptionResolver;
 
 import javax.servlet.Filter;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.Map;
-import java.util.Properties;
 
 /**
  * @ClassName ShiroConfig
@@ -112,19 +110,5 @@ public class ShiroConfig {
         AuthorizationAttributeSourceAdvisor authorizationAttributeSourceAdvisor = new AuthorizationAttributeSourceAdvisor();
         authorizationAttributeSourceAdvisor.setSecurityManager(securityManager);
         return authorizationAttributeSourceAdvisor;
-    }
-
-    //配置异常处理，不配置的话没有权限后台报错，前台不会跳转到403页面
-    @Bean(name = "simpleMappingExceptionResolver")
-    public SimpleMappingExceptionResolver
-    createSimpleMappingExceptionResolver() {
-        SimpleMappingExceptionResolver simpleMappingExceptionResolver = new SimpleMappingExceptionResolver();
-        Properties mappings = new Properties();
-        mappings.setProperty("DatabaseException", "databaseError");//数据库异常处理
-        mappings.setProperty("UnauthorizedException", "403");
-        simpleMappingExceptionResolver.setExceptionMappings(mappings);  // None by default
-        simpleMappingExceptionResolver.setDefaultErrorView("error");    // No default
-        simpleMappingExceptionResolver.setExceptionAttribute("ex");     // Default is "exception"
-        return simpleMappingExceptionResolver;
     }
 }

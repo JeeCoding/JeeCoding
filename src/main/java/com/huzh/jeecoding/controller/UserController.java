@@ -1,8 +1,7 @@
 package com.huzh.jeecoding.controller;
 
-import com.github.pagehelper.Page;
 import com.github.pagehelper.PageHelper;
-import com.huzh.jeecoding.entity.User;
+import com.huzh.jeecoding.common.CommonResult;
 import com.huzh.jeecoding.service.UserService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
@@ -28,11 +27,11 @@ public class UserController {
     @ApiOperation("分页查询品牌列表")
     @RequestMapping(value = "/list", method = RequestMethod.GET)
     @ResponseBody
-    public Page<User> findAll(@RequestParam(value = "pageNum", defaultValue = "1")
-                              @ApiParam("页码") Integer pageNum,
-                              @RequestParam(value = "pageSize", defaultValue = "2")
-                              @ApiParam("每页数量") Integer pageSize) {
+    public CommonResult findAll(@RequestParam(value = "pageNum", defaultValue = "1")
+                                @ApiParam("页码") Integer pageNum,
+                                @RequestParam(value = "pageSize", defaultValue = "2")
+                                @ApiParam("每页数量") Integer pageSize) {
         PageHelper.startPage(pageNum, pageSize);
-        return userService.getPage();
+        return CommonResult.success(userService.getPage());
     }
 }

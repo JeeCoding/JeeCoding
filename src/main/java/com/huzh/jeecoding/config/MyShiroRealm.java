@@ -4,6 +4,8 @@ import com.huzh.jeecoding.entity.Permission;
 import com.huzh.jeecoding.entity.Role;
 import com.huzh.jeecoding.entity.User;
 import com.huzh.jeecoding.service.UserService;
+import com.huzh.jeecoding.util.JwtTokenUtil;
+import lombok.extern.slf4j.Slf4j;
 import org.apache.shiro.authc.AuthenticationException;
 import org.apache.shiro.authc.AuthenticationInfo;
 import org.apache.shiro.authc.AuthenticationToken;
@@ -12,7 +14,9 @@ import org.apache.shiro.authz.AuthorizationInfo;
 import org.apache.shiro.authz.SimpleAuthorizationInfo;
 import org.apache.shiro.realm.AuthorizingRealm;
 import org.apache.shiro.subject.PrincipalCollection;
-import org.apache.shiro.util.ByteSource;
+import org.springframework.beans.BeanUtils;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
 
 import javax.annotation.Resource;
 
@@ -23,47 +27,79 @@ import javax.annotation.Resource;
  * @Author huzh
  * @Version 1.0
  */
+@Component
+@Slf4j
 public class MyShiroRealm extends AuthorizingRealm {
 
     @Resource
     private UserService userService;
 
+    @Autowired
+    private JwtTokenUtil jwtTokenUtil;
+
+    /**
+     * 必须重写此方法，不然Shiro会报错
+     */
+    @Override
+    public boolean supports(AuthenticationToken token) {
+        return token instanceof JwtToken;
+    }
+
     @Override
     protected AuthorizationInfo doGetAuthorizationInfo(PrincipalCollection principals) {
-
-        System.out.println("权限配置-->MyShiroRealm.doGetAuthorizationInfo()");
+        String username = jwtTokenUtil.getUserNameFromToken(principals.toString());
+        User user = userService.getUserByName(username);
         SimpleAuthorizationInfo authorizationInfo = new SimpleAuthorizationInfo();
-        User user = (User) principals.getPrimaryPrincipal();
         for (Role role : user.getRoles()) {
             authorizationInfo.addRole(role.getRole());
             for (Permission permission : role.getPermissions()) {
                 authorizationInfo.addStringPermission(permission.getPermission());
             }
         }
-        return authorizationInfo;    }
+        return authorizationInfo;
+    }
 
     @Override
-    protected AuthenticationInfo doGetAuthenticationInfo(AuthenticationToken token) throws AuthenticationException {
-
-        System.out.println("MyShiroRealm.doGetAuthenticationInfo()");
-        //获得当前用户的用户名
-        String username = (String) token.getPrincipal();
-        System.out.println(token.getCredentials());
-        //根据用户名找到对象
-        //实际项目中，这里可以根据实际情况做缓存，如果不做，Shiro自己也是有时间间隔机制，2分钟内不会重复执行该方法
-        User user = userService.get(username);
-//        System.out.println("----->>userInfo=" + user);
-        if (user == null) {
-            return null;
+    protected AuthenticationInfo doGetAuthenticationInfo(AuthenticationToken auth) throws AuthenticationException {
+        String token = (String) auth.getCredentials();
+        if (token == null) {
+            throw new AuthenticationException("token为空!");
         }
-        //这里会去校验密码是否正确
-        SimpleAuthenticationInfo authenticationInfo = new SimpleAuthenticationInfo(
-                user, //用户名
-                user.getPassWord(), //密码
-                ByteSource.Util.bytes(user.getCredentialsSalt()),//salt=username+salt
-                getName()  //realm name
-        );
-        return authenticationInfo;
+        // 校验token有效性
+        User loginUser = this.checkUserTokenIsEffect(token);
+        return new SimpleAuthenticationInfo(loginUser, token, getName());
+    }
 
+    /**
+     * 校验token的有效性
+     *
+     * @param token
+     */
+    public User checkUserTokenIsEffect(String token) throws AuthenticationException {
+        // 解密获得username，用于和数据库进行对比
+        String username = jwtTokenUtil.getUserNameFromToken(token);
+        if (username == null) {
+            throw new AuthenticationException("token非法无效!");
+        }
+
+        // 查询用户信息
+        User loginUser = new User();
+        User user = userService.getUserByName(username);
+        if (user == null) {
+            throw new AuthenticationException("用户不存在!");
+        }
+
+        // 校验token是否超时失效 & 或者账号密码是否错误
+        if (!jwtTokenUtil.validateToken(token, user)) {
+            throw new AuthenticationException("Token失效请重新登录!");
+        }
+
+        // 判断用户状态
+        if (!"0".equals(user.getState())) {
+            throw new AuthenticationException("账号已被删除,请联系管理员!");
+        }
+
+        BeanUtils.copyProperties(user, loginUser);
+        return loginUser;
     }
 }

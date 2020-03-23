@@ -32,11 +32,11 @@ public class Swagger2Config {
                 .build();
     }
 
-    public ApiInfo apiInfo(){
+    public ApiInfo apiInfo() {
         return new ApiInfoBuilder()
                 .title("JeeCoding接口文档")
                 .description("JeeCoding接口文档")
-                .contact(new Contact("JeeCoding","https://github.com/JeeCoding/JeeCoding","*****@qq.com"))
+                .contact(new Contact("JeeCoding", "https://github.com/JeeCoding/JeeCoding", "*****@qq.com"))
                 .version("1.0.0")
                 .build();
     }

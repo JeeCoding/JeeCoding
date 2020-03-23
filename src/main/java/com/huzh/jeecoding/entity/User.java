@@ -80,6 +80,7 @@ public class User implements Serializable {
     public String getCredentialsSalt() {
         return this.userName + this.salt;
     }
+
     @Override
     public String toString() {
         StringBuilder sb = new StringBuilder();
