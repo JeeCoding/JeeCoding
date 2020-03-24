@@ -94,7 +94,7 @@ public class MyShiroRealm extends AuthorizingRealm {
         }
 
         // 判断用户状态
-        if (!"0".equals(user.getState())) {
+        if ("0".equals(user.getState())) {
             throw new AuthenticationException("账号已被删除,请联系管理员!");
         }
 

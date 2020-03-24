@@ -26,17 +26,6 @@ import javax.servlet.http.HttpServletResponse;
 public class JwtFilter extends BasicHttpAuthenticationFilter {
 
     /**
-     * 判断用户是否想要登入。
-     * 检测header里面是否包含Authorization字段即可
-     */
-    @Override
-    protected boolean isLoginAttempt(ServletRequest request, ServletResponse response) {
-        HttpServletRequest req = (HttpServletRequest) request;
-        String authorization = req.getHeader("Authorization");
-        return authorization != null;
-    }
-
-    /**
      * 执行登录认证
      * <p>
      * 这里我们详细说明下为什么最终返回的都是true，即允许访问
@@ -50,12 +39,10 @@ public class JwtFilter extends BasicHttpAuthenticationFilter {
     @Override
     protected boolean isAccessAllowed(ServletRequest request, ServletResponse response, Object mappedValue) {
         try {
-            if (isLoginAttempt(request, response)) {
-                executeLogin(request, response);
-            }
+            executeLogin(request, response);
             return true;
         } catch (Exception e) {
-            throw new AuthenticationException("Token失效请重新登录");
+            throw new AuthenticationException();
         }
     }
 

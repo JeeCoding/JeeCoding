@@ -41,12 +41,12 @@ public class ShiroConfig {
         Map<String, String> filterChainDefinitionMap = new LinkedHashMap<String, String>();
 
         // 配置不被拦截的资源及链接 顺序判断
+        filterChainDefinitionMap.put("/login", "anon"); //登录接口排除
+        filterChainDefinitionMap.put("/logout", "anon"); //登出接口排除
+        filterChainDefinitionMap.put("/", "anon");
         filterChainDefinitionMap.put("/static/**", "anon");
         filterChainDefinitionMap.put("/favicon.ico", "anon");
         filterChainDefinitionMap.put("/logout", "anon");
-        filterChainDefinitionMap.put("/**", "anon");
-//        shiroFilterFactoryBean.setLoginUrl("/login");
-//        shiroFilterFactoryBean.setSuccessUrl("/index");
 
         // 添加自己的过滤器并且取名为jwt
         Map<String, Filter> filterMap = new HashMap<String, Filter>(1);
