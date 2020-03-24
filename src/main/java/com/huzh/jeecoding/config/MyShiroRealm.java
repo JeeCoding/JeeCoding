@@ -27,7 +27,6 @@ import javax.annotation.Resource;
  * @Author huzh
  * @Version 1.0
  */
-@Component
 @Slf4j
 public class MyShiroRealm extends AuthorizingRealm {
 

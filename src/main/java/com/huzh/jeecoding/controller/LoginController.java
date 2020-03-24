@@ -46,8 +46,8 @@ public class LoginController {
         String token = jwtTokenUtil.generateToken(loginUser);
         redisUtil.set(CommonConstant.PREFIX_USER_TOKEN + token, token);
         // 设置超时时间
-        redisUtil.expire(CommonConstant.PREFIX_USER_TOKEN + token, JwtUtil.EXPIRE_TIME / 1000);
+        redisUtil.expire(CommonConstant.PREFIX_USER_TOKEN + token, jwtTokenUtil.getExpiration() * 1000);
 
-        return CommonResult.success(token,"登录成功");
+        return CommonResult.success(token, "登录成功");
     }
 }
