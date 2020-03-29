@@ -1,4 +1,4 @@
-package com.huzh.jeecoding.config;
+package com.huzh.jeecoding.config.redis;
 
 import org.springframework.cache.CacheManager;
 import org.springframework.cache.annotation.CachingConfigurerSupport;

@@ -1,13 +1,10 @@
-package com.huzh.jeecoding.config;
+package com.huzh.jeecoding.config.shiro.jwt;
 
 import org.apache.shiro.authc.AuthenticationToken;
 
 /**
- * @ClassName JwtToken
- * @Description TODO
- * @Date 2020/3/20 15:26
- * @Author huzh
- * @Version 1.0
+ * @author huzh
+ * @date 2020/3/20 15:26
  */
 public class JwtToken implements AuthenticationToken {
 

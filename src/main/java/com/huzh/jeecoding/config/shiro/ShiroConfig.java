@@ -1,5 +1,6 @@
-package com.huzh.jeecoding.config;
+package com.huzh.jeecoding.config.shiro;
 
+import com.huzh.jeecoding.config.shiro.jwt.JwtFilter;
 import org.apache.shiro.authc.credential.HashedCredentialsMatcher;
 import org.apache.shiro.mgt.DefaultSessionStorageEvaluator;
 import org.apache.shiro.mgt.DefaultSubjectDAO;

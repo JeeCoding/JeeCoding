@@ -1,5 +1,6 @@
-package com.huzh.jeecoding.config;
+package com.huzh.jeecoding.config.shiro;
 
+import com.huzh.jeecoding.config.shiro.jwt.JwtToken;
 import com.huzh.jeecoding.entity.Permission;
 import com.huzh.jeecoding.entity.Role;
 import com.huzh.jeecoding.entity.User;
@@ -16,7 +17,6 @@ import org.apache.shiro.realm.AuthorizingRealm;
 import org.apache.shiro.subject.PrincipalCollection;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Component;
 
 import javax.annotation.Resource;
 

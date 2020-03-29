@@ -1,12 +1,4 @@
-package com.huzh.jeecoding.config;
-
-/**
- * @ClassName JwtFilter
- * @Description TODO
- * @Date 2020/3/20 15:26
- * @Author huzh
- * @Version 1.0
- */
+package com.huzh.jeecoding.config.shiro.jwt;
 
 import lombok.extern.slf4j.Slf4j;
 import org.apache.shiro.authc.AuthenticationException;
@@ -20,8 +12,8 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 /**
- * 鉴权登录拦截器
- **/
+ * JWT过滤
+ */
 @Slf4j
 public class JwtFilter extends BasicHttpAuthenticationFilter {
 
@@ -42,7 +34,7 @@ public class JwtFilter extends BasicHttpAuthenticationFilter {
             executeLogin(request, response);
             return true;
         } catch (Exception e) {
-            throw new AuthenticationException();
+            throw new AuthenticationException("Token失效请重新登录");
         }
     }
 
