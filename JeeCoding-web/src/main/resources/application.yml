@@ -1,0 +1,63 @@
+server:
+  port: 8888
+spring:
+  jmx:
+    enabled: false
+  datasource:
+    url: jdbc:mysql://localhost:3306/JeeCoding?useUnicode=true&characterEncoding=utf-8&serverTimezone=Asia/Shanghai
+    username: root
+    password: 123456
+    type: com.alibaba.druid.pool.DruidDataSource
+    druid:
+      filters: stat,wall,slf4j
+      max-active: 20
+      initial-size: 5
+      min-idle: 5
+      max-wait: 60000
+      time-between-eviction-runs-millis: 60000
+      min-evictable-idle-time-millis: 300000
+      validation-query: select 'x'
+      test-while-idle: true
+      test-on-borrow: true
+      test-on-return: false
+      pool-prepared-statements: true
+      max-pool-prepared-statement-per-connection-size: 20
+      use-global-data-source-stat: true
+      connection-properties: druid.stat.mergeSql=true;druid.stat.slowSqlMillis=500
+  redis:
+    database: 0
+    host: localhost
+    port: 6379
+    password:
+    timeout: 3000ms
+    lettuce:
+      pool:
+        max-active: 8
+        max-wait: -1ms
+        max-idle: 8
+        min-idle: 0
+
+mybatis:
+  type-aliases-package: com.huzh.jeecoding.dao.entity
+  check-config-location: true
+  config-location: classpath:mybatis/mybatis-config.xml
+  mapper-locations:
+    #    - classpath:mapper/*Mapper.xml
+    - classpath*:mybatis/Mapper/*.xml
+pagehelper:
+  helper-dialect: mysql
+  reasonable: true
+  support-methods-arguments: true
+  params: count=countSql
+
+jwt:
+  tokenHeader: Authorization #JWT存储的请求头
+  secret: mall-admin-secret #JWT加解密使用的密钥
+  expiration: 604800 #JWT的超期限时间(60*60*24)
+  tokenHead: Bearer  #JWT负载中拿到开头
+  # AccessToken过期时间-5分钟-5*60(秒为单位)
+  accessTokenExpireTime: 300
+  # RefreshToken过期时间-30分钟-30*60(秒为单位)
+  refreshTokenExpireTime: 1800
+  # Shiro缓存过期时间-5分钟-5*60(秒为单位)(一般设置与AccessToken过期时间一致)
+  shiroCacheExpireTime: 300
