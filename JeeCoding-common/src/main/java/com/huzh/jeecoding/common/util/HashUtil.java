@@ -9,7 +9,7 @@ import java.security.SecureRandom;
  * @description: 消息摘要算法, md5和sha-1
  * @date 2020/5/8 13:57
  */
-public class HashUtils {
+public class HashUtil {
 
     public final static Integer SALT_LENGTH = 8;
     public static final String ALGORITHM_MD5 = "MD5";

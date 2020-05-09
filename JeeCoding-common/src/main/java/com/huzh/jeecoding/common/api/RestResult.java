@@ -1,11 +1,13 @@
 package com.huzh.jeecoding.common.api;
 
+import java.io.Serializable;
+
 /**
  * @author huzh
  * @description: 通用返回对象
  * @date 2020/5/7 10:27
  */
-public class RestResult<T> {
+public class RestResult<T> implements Serializable {
     private long code;
     private String message;
     private T data;

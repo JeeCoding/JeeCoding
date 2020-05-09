@@ -28,7 +28,6 @@ import java.util.Map;
 @Configuration
 public class ShiroConfig {
 
-    private static final String JWT_FILTER_NAME = "jwt";
 
     /**
      * 配置securityManager 管理subject（默认）,并把自定义realm交由manager
@@ -63,7 +62,7 @@ public class ShiroConfig {
      */
     private Map<String, Filter> filterMap() {
         Map<String, Filter> filterMap = new HashMap<>();
-        filterMap.put(JWT_FILTER_NAME, new JWTFilter());
+        filterMap.put("jwt", new JWTFilter());
         return filterMap;
     }
 
@@ -73,7 +72,7 @@ public class ShiroConfig {
     private Map<String, String> definitionMap() {
         Map<String, String> definitionMap = new HashMap<>();
         definitionMap.put("/login", "anon");
-        definitionMap.put("/**", JWT_FILTER_NAME);
+        definitionMap.put("/**", "jwt");
         return definitionMap;
     }
 

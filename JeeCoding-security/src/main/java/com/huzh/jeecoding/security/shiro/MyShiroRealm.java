@@ -1,23 +1,25 @@
 package com.huzh.jeecoding.security.shiro;
 
+import com.huzh.jeecoding.common.constant.JWTConstant;
+import com.huzh.jeecoding.common.constant.RedisConstant;
+import com.huzh.jeecoding.common.util.JWTUtil;
 import com.huzh.jeecoding.dao.entity.Permission;
 import com.huzh.jeecoding.dao.entity.Role;
 import com.huzh.jeecoding.dao.entity.User;
 import com.huzh.jeecoding.security.jwt.JWTToken;
-import com.huzh.jeecoding.security.util.JWTUtil;
+import com.huzh.jeecoding.security.redis.RedisUtil;
 import com.huzh.jeecoding.service.UserService;
 import lombok.extern.slf4j.Slf4j;
-import org.apache.shiro.authc.AccountException;
 import org.apache.shiro.authc.AuthenticationException;
 import org.apache.shiro.authc.AuthenticationInfo;
 import org.apache.shiro.authc.AuthenticationToken;
 import org.apache.shiro.authc.SimpleAuthenticationInfo;
-import org.apache.shiro.authc.UnknownAccountException;
 import org.apache.shiro.authz.AuthorizationInfo;
 import org.apache.shiro.authz.SimpleAuthorizationInfo;
 import org.apache.shiro.realm.AuthorizingRealm;
 import org.apache.shiro.subject.PrincipalCollection;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.util.StringUtils;
 
 
 /**
@@ -32,8 +34,9 @@ public class MyShiroRealm extends AuthorizingRealm {
 
     @Autowired
     private UserService userService;
+
     @Autowired
-    private JWTUtil jwtUtil;
+    private RedisUtil redisUtil;
 
 
     /**
@@ -54,27 +57,34 @@ public class MyShiroRealm extends AuthorizingRealm {
     @Override
     protected AuthenticationInfo doGetAuthenticationInfo(AuthenticationToken authenticationToken)
             throws AuthenticationException {
-        //getCredentials getPrincipal getToken 都是返回jwt生成的token串
         String token = (String) authenticationToken.getCredentials();
-
-        String username = jwtUtil.getUserNameFromToken(token);
-        if (username == null) {
-            throw new AccountException("token失效！");
+        if (StringUtils.isEmpty(token)) {
+            throw new AuthenticationException("token不能为空");
         }
+
+        String username = JWTUtil.getClaim(token, JWTConstant.USERNAME);
+        // 帐号为空
+        if (StringUtils.isEmpty(username)) {
+            throw new AuthenticationException("token中帐号为空(The account in Token is empty.)");
+        }
+
         //如果需要可以根据业务实现db操作,这里根据service写死
         User loginUser = userService.getUserByName(username);
         if (loginUser == null) {
-            throw new AuthenticationException("用户不存在！");
+            throw new AuthenticationException("该帐号不存在(The account does not exist.)");
         }
 
-        if (!jwtUtil.validateToken(token, loginUser.getUserName())) {
-            throw new UnknownAccountException("用户名或密码错误！");
-        }
 
-        if ("0".equals(loginUser.getState())) {
-            throw new AuthenticationException("该用户已被封号！");
+        // 开始认证，要AccessToken认证通过，且Redis中存在RefreshToken，且两个Token时间戳一致
+        if (JWTUtil.verify(token) && redisUtil.exists(RedisConstant.PREFIX_SHIRO_REFRESH_TOKEN + username)) {
+            // 获取RefreshToken的时间戳
+            String currentTimeMillisRedis = redisUtil.get(RedisConstant.PREFIX_SHIRO_REFRESH_TOKEN + username);
+            // 获取AccessToken时间戳，与RefreshToken的时间戳对比
+            if (JWTUtil.getClaim(token, JWTConstant.CURRENT_TIME_MILLIS).equals(currentTimeMillisRedis)) {
+                return new SimpleAuthenticationInfo(token, token, "userRealm");
+            }
         }
-        return new SimpleAuthenticationInfo(token, token, getName());
+        throw new AuthenticationException("Token已过期(Token expired or incorrect.)");
     }
 
     /**
@@ -83,8 +93,8 @@ public class MyShiroRealm extends AuthorizingRealm {
     @Override
     protected AuthorizationInfo doGetAuthorizationInfo(PrincipalCollection principals) {
         String token = principals.toString();
-        //根据token获取权限授权
-        String username = jwtUtil.getUserNameFromToken(token);
+        // 返回当前用户所拥有的角色、权限等信息，根据自身项目编码即可
+        String username = JWTUtil.getClaim(token, JWTConstant.USERNAME);
         User loginUser = userService.getUserByName(username);
         SimpleAuthorizationInfo authorizationInfo = new SimpleAuthorizationInfo();
         for (Role role : loginUser.getRoles()) {
@@ -93,8 +103,6 @@ public class MyShiroRealm extends AuthorizingRealm {
                 authorizationInfo.addStringPermission(permission.getPermission());
             }
         }
-//        authorizationInfo.setRoles(loginUser.getRoles());
-//        authorizationInfo.setStringPermissions(loginUser.getPermissions());
         return authorizationInfo;
     }
 }

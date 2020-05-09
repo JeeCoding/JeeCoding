@@ -50,14 +50,10 @@ pagehelper:
   support-methods-arguments: true
   params: count=countSql
 
-jwt:
-  tokenHeader: Authorization #JWT存储的请求头
-  secret: mall-admin-secret #JWT加解密使用的密钥
-  expiration: 604800 #JWT的超期限时间(60*60*24)
-  tokenHead: Bearer  #JWT负载中拿到开头
+config:
   # AccessToken过期时间-5分钟-5*60(秒为单位)
-  accessTokenExpireTime: 300
+  accessToken-expireTime: 600
   # RefreshToken过期时间-30分钟-30*60(秒为单位)
-  refreshTokenExpireTime: 1800
-  # Shiro缓存过期时间-5分钟-5*60(秒为单位)(一般设置与AccessToken过期时间一致)
-  shiroCacheExpireTime: 300
+  refreshToken-expireTime: 1800
+  # JWT认证加密私钥(Base64加密)
+  encrypt-jwtKey: U0JBUElOENhspJrzkyNjQ1NA

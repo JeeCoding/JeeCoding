@@ -12,13 +12,13 @@ public class PasswordUtil {
 
     public static String getEncryptedPwd(String password) throws UnsupportedEncodingException {
         // 拿到一个随机数组，作为盐
-        byte[] salt = HashUtils.genSalt(HashUtils.SALT_LENGTH);
-        byte[] digest = HashUtils.digest(password.getBytes(HashUtils.UTF_8), HashUtils.ALGORITHM_SHA1, salt);
+        byte[] salt = HashUtil.genSalt(HashUtil.SALT_LENGTH);
+        byte[] digest = HashUtil.digest(password.getBytes(HashUtil.UTF_8), HashUtil.ALGORITHM_SHA1, salt);
         byte[] pwd = new byte[salt.length + digest.length];
 
-        System.arraycopy(salt, 0, pwd, 0, HashUtils.SALT_LENGTH);
-        System.arraycopy(digest, 0, pwd, HashUtils.SALT_LENGTH, digest.length);
-        return new String(HashUtils.encodeHex(pwd));
+        System.arraycopy(salt, 0, pwd, 0, HashUtil.SALT_LENGTH);
+        System.arraycopy(digest, 0, pwd, HashUtil.SALT_LENGTH, digest.length);
+        return new String(HashUtil.encodeHex(pwd));
     }
 
     /**
@@ -31,18 +31,18 @@ public class PasswordUtil {
      */
     public static boolean validPasswd(String password, String dbPasswd)
             throws Exception {
-        byte[] pwIndb = HashUtils.decodeHex(dbPasswd);
-        byte[] salt = new byte[HashUtils.SALT_LENGTH];
+        byte[] pwIndb = HashUtil.decodeHex(dbPasswd);
+        byte[] salt = new byte[HashUtil.SALT_LENGTH];
         //将密码中属于salt部分复制到salt数组中
-        System.arraycopy(pwIndb, 0, salt, 0, HashUtils.SALT_LENGTH);
+        System.arraycopy(pwIndb, 0, salt, 0, HashUtil.SALT_LENGTH);
 
         // 声明一个对象接收数据库中的口令消息摘要
-        byte[] digestIndb = new byte[pwIndb.length - HashUtils.SALT_LENGTH];
+        byte[] digestIndb = new byte[pwIndb.length - HashUtil.SALT_LENGTH];
         // 获得数据库中口令的摘要
-        System.arraycopy(pwIndb, HashUtils.SALT_LENGTH, digestIndb, 0, digestIndb.length);
+        System.arraycopy(pwIndb, HashUtil.SALT_LENGTH, digestIndb, 0, digestIndb.length);
 
         //生成的摘要数据
-        byte[] digest = HashUtils.digest(password.getBytes(HashUtils.UTF_8), HashUtils.ALGORITHM_SHA1, salt);
+        byte[] digest = HashUtil.digest(password.getBytes(HashUtil.UTF_8), HashUtil.ALGORITHM_SHA1, salt);
         // 比较根据输入口令生成的消息摘要和数据库中的口令摘要是否相同
         if (Arrays.equals(digest, digestIndb)) {
             return true;// 口令匹配相同

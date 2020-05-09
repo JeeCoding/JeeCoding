@@ -33,7 +33,7 @@
         <swagger.version>2.9.2</swagger.version>
         <shiro.version>1.5.0</shiro.version>
         <shiro-spring.version>1.4.0</shiro-spring.version>
-        <jjwt.version>0.9.1</jjwt.version>
+        <java-jwt.version>3.9.0</java-jwt.version>
         <druid.version>1.1.21</druid.version>
         <fastjson.version>1.2.56</fastjson.version>
     </properties>
@@ -98,6 +98,7 @@
             <artifactId>commons-pool2</artifactId>
         </dependency>
 
+        <!--shiro-->
         <dependency>
             <groupId>org.apache.shiro</groupId>
             <artifactId>shiro-spring</artifactId>
@@ -106,9 +107,9 @@
 
         <!--JWT(Json Web Token)登录支持-->
         <dependency>
-            <groupId>io.jsonwebtoken</groupId>
-            <artifactId>jjwt</artifactId>
-            <version>${jjwt.version}</version>
+            <groupId>com.auth0</groupId>
+            <artifactId>java-jwt</artifactId>
+            <version>${java-jwt.version}</version>
         </dependency>
 
         <!--lombok-->

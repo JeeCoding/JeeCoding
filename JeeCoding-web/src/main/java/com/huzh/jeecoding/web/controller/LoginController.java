@@ -2,20 +2,24 @@ package com.huzh.jeecoding.web.controller;
 
 
 import com.huzh.jeecoding.common.api.RestResult;
-import com.huzh.jeecoding.common.constant.TokenConstant;
-import com.huzh.jeecoding.common.util.RedisUtil;
+import com.huzh.jeecoding.common.constant.RedisConstant;
+import com.huzh.jeecoding.common.exception.UnauthorizedException;
+import com.huzh.jeecoding.common.util.JWTUtil;
+import com.huzh.jeecoding.common.util.PasswordUtil;
 import com.huzh.jeecoding.dao.entity.User;
-import com.huzh.jeecoding.security.util.JWTUtil;
+import com.huzh.jeecoding.security.redis.RedisUtil;
 import com.huzh.jeecoding.service.UserService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import lombok.extern.slf4j.Slf4j;
-import org.apache.shiro.authc.UnknownAccountException;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
+
+import javax.servlet.http.HttpServletResponse;
 
 /**
  * @author huzh
@@ -25,18 +29,18 @@ import org.springframework.web.bind.annotation.RestController;
 @RestController
 public class LoginController {
 
+    @Value("${config.refreshToken-expireTime}")
+    private String refreshTokenExpireTime;
+
     @Autowired
     private UserService userService;
 
     @Autowired
     private RedisUtil redisUtil;
 
-    @Autowired
-    private JWTUtil jwtUtil;
-
     @ApiOperation(value = "用户登录", notes = "登录--不进行拦截")
     @PostMapping(value = "/login")
-    public RestResult login(@RequestBody User loginUser) throws Exception {
+    public RestResult login(@RequestBody User loginUser, HttpServletResponse response) throws Exception {
         String username = loginUser.getUserName();
         String password = loginUser.getPassWord();
 
@@ -47,26 +51,26 @@ public class LoginController {
         //情况1：根据用户信息查询，该用户不存在
         User user = userService.getUserByName(username);
         if (user == null) {
-            return RestResult.validateFailed("该用户不存在!");
-        }
-        if (!password.equals(user.getPassWord())) {
-            throw new UnknownAccountException("用户名和密码错误!");
-        }
-        //情况2：根据用户信息查询，该用户已注销
-        if ("0".equals(user.getState())) {
-            return RestResult.validateFailed("该用户已注销!");
-        }
-        //情况3：根据用户信息查询，该用户已被删除
-        if ("1".equals(user.getState())) {
-            return RestResult.validateFailed("该用户已被删除!");
+            throw new UnauthorizedException("该帐号不存在(The account does not exist.)");
         }
 
-        // 生成token
-        String token = jwtUtil.generateToken(username);
-        redisUtil.set(TokenConstant.PREFIX_USER_TOKEN + token, token);
-        // 设置超时时间
-        redisUtil.expire(TokenConstant.PREFIX_USER_TOKEN + token, jwtUtil.getExpiration() * 1000);
-
-        return RestResult.success(token, "登录成功");
+        System.out.println(PasswordUtil.getEncryptedPwd(password));
+        if (PasswordUtil.validPasswd(password, user.getPassWord())) {
+            // 清除可能存在的Shiro权限信息缓存
+            if (redisUtil.exists(RedisConstant.PREFIX_SHIRO_CACHE + username)) {
+                redisUtil.delete(RedisConstant.PREFIX_SHIRO_CACHE + username);
+            }
+            // 设置RefreshToken，时间戳为当前时间戳，直接设置即可(不用先删后设，会覆盖已有的RefreshToken)
+            String currentTimeMillis = String.valueOf(System.currentTimeMillis());
+            redisUtil.set(RedisConstant.PREFIX_SHIRO_REFRESH_TOKEN + username, currentTimeMillis,
+                    Integer.parseInt(refreshTokenExpireTime));
+            // 从Header中Authorization返回AccessToken，时间戳为当前时间戳
+            String token = JWTUtil.createToken(username, currentTimeMillis);
+            response.setHeader("Authorization", token);
+            response.setHeader("Access-Control-Expose-Headers", "Authorization");
+            return RestResult.success(token, "登录成功(Login Success.)");
+        } else {
+            throw new UnauthorizedException("帐号或密码错误(Account or Password Error.)");
+        }
     }
 }
