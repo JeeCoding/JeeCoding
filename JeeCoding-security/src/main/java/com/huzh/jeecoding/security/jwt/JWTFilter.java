@@ -9,14 +9,14 @@ import com.huzh.jeecoding.common.constant.JWTConstant;
 import com.huzh.jeecoding.common.constant.RedisConstant;
 import com.huzh.jeecoding.common.exception.JWTException;
 import com.huzh.jeecoding.common.util.JWTUtil;
-import com.huzh.jeecoding.security.redis.RedisUtil;
+import com.huzh.jeecoding.common.util.redis.RedisUtil;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.shiro.web.filter.authc.BasicHttpAuthenticationFilter;
 import org.apache.shiro.web.util.WebUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.context.annotation.Configuration;
 import org.springframework.http.HttpStatus;
-import org.springframework.stereotype.Component;
 import org.springframework.web.bind.annotation.RequestMethod;
 
 import javax.servlet.ServletRequest;
@@ -31,12 +31,12 @@ import java.io.PrintWriter;
  *
  * @author huzh
  */
-@Component
+@Configuration
 @Slf4j
 public class JWTFilter extends BasicHttpAuthenticationFilter {
 
     @Value("${config.refreshToken-expireTime}")
-    private String refreshTokenExpireTime;
+    public String refreshTokenExpireTime;
 
     @Autowired
     private RedisUtil redisUtil;

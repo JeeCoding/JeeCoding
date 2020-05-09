@@ -1,4 +1,4 @@
-package com.huzh.jeecoding.security.redis;
+package com.huzh.jeecoding.common.util.redis;
 
 import com.huzh.jeecoding.common.exception.JWTException;
 import org.springframework.beans.factory.annotation.Autowired;

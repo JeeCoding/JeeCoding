@@ -18,6 +18,12 @@
             <artifactId>JeeCoding-service</artifactId>
             <version>1.0-SNAPSHOT</version>
         </dependency>
+
+        <!--fast json-->
+        <dependency>
+            <groupId>com.alibaba</groupId>
+            <artifactId>fastjson</artifactId>
+        </dependency>
     </dependencies>
 
 </project>
