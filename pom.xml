@@ -30,7 +30,6 @@
         <mybatis.pagehelper.version>1.2.13</mybatis.pagehelper.version>
         <mybatis.generator.version>1.4.0</mybatis.generator.version>
         <swagger.version>2.9.2</swagger.version>
-        <shiro.version>1.5.0</shiro.version>
         <shiro-spring.version>1.4.0</shiro-spring.version>
         <java-jwt.version>3.9.0</java-jwt.version>
         <druid.version>1.1.21</druid.version>
