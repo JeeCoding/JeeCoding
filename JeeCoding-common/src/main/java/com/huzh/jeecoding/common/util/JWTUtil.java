@@ -6,7 +6,7 @@ import com.auth0.jwt.algorithms.Algorithm;
 import com.auth0.jwt.exceptions.JWTDecodeException;
 import com.auth0.jwt.interfaces.DecodedJWT;
 import com.huzh.jeecoding.common.constant.JWTConstant;
-import com.huzh.jeecoding.common.exception.JWTException;
+import com.huzh.jeecoding.common.exception.CustomException;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
@@ -66,7 +66,7 @@ public class JWTUtil {
             return true;
         } catch (UnsupportedEncodingException e) {
             log.error("JWTToken认证解密出现UnsupportedEncodingException异常:{}", e.getMessage());
-            throw new JWTException("JWTToken认证解密出现UnsupportedEncodingException异常:" + e.getMessage());
+            throw new CustomException("JWTToken认证解密出现UnsupportedEncodingException异常:" + e.getMessage());
         }
     }
 
@@ -83,7 +83,7 @@ public class JWTUtil {
             return jwt.getClaim(claim).asString();
         } catch (JWTDecodeException e) {
             log.error("解密Token中的公共信息出现JWTDecodeException异常:{}", e.getMessage());
-            throw new JWTException("解密Token中的公共信息出现JWTDecodeException异常:" + e.getMessage());
+            throw new CustomException("解密Token中的公共信息出现JWTDecodeException异常:" + e.getMessage());
         }
     }
 
@@ -109,7 +109,7 @@ public class JWTUtil {
                     .sign(algorithm);
         } catch (UnsupportedEncodingException e) {
             log.error("JWTToken加密出现UnsupportedEncodingException异常:{}", e.getMessage());
-            throw new JWTException("JWTToken加密出现UnsupportedEncodingException异常:" + e.getMessage());
+            throw new CustomException("JWTToken加密出现UnsupportedEncodingException异常:" + e.getMessage());
         }
     }
 }

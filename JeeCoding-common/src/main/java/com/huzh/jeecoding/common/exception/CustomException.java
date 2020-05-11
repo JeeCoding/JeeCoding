@@ -5,13 +5,13 @@ package com.huzh.jeecoding.common.exception;
  * @description:
  * @date 2020/5/8 19:45
  */
-public class JWTException extends RuntimeException {
+public class CustomException extends RuntimeException {
 
-    public JWTException(String message) {
+    public CustomException(String message) {
         super(message);
     }
 
-    public JWTException() {
+    public CustomException() {
         super();
     }
 }

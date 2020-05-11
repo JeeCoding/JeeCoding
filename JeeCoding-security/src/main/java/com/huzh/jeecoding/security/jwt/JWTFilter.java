@@ -7,7 +7,7 @@ import com.huzh.jeecoding.common.api.RestResult;
 import com.huzh.jeecoding.common.api.ResultCode;
 import com.huzh.jeecoding.common.constant.JWTConstant;
 import com.huzh.jeecoding.common.constant.RedisConstant;
-import com.huzh.jeecoding.common.exception.JWTException;
+import com.huzh.jeecoding.common.exception.CustomException;
 import com.huzh.jeecoding.common.util.JWTUtil;
 import com.huzh.jeecoding.common.util.redis.RedisUtil;
 import lombok.extern.slf4j.Slf4j;
@@ -179,7 +179,7 @@ public class JWTFilter extends BasicHttpAuthenticationFilter {
             out.append(JSONObject.toJSONString(unauthentication));
         } catch (IOException e) {
             log.error("直接返回Response信息出现IOException异常:{}", e.getMessage());
-            throw new JWTException("直接返回Response信息出现IOException异常:" + e.getMessage());
+            throw new CustomException("直接返回Response信息出现IOException异常:" + e.getMessage());
         }
     }
 

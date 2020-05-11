@@ -1,6 +1,6 @@
 package com.huzh.jeecoding.common.util.redis;
 
-import com.huzh.jeecoding.common.exception.JWTException;
+import com.huzh.jeecoding.common.exception.CustomException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Component;
@@ -65,7 +65,7 @@ public class RedisUtil {
         try {
             return redisTemplate.hasKey(key);
         } catch (Exception e) {
-            throw new JWTException("查询Redis的键是否存在exists方法异常:key=" + key + " cause=" + e.getMessage());
+            throw new CustomException("查询Redis的键是否存在exists方法异常:key=" + key + " cause=" + e.getMessage());
         }
     }
 
@@ -85,7 +85,7 @@ public class RedisUtil {
                 }
             }
         } catch (Exception e) {
-            throw new JWTException("删除Redis的键值delete方法异常:key=" + key + " cause=" + e.getMessage());
+            throw new CustomException("删除Redis的键值delete方法异常:key=" + key + " cause=" + e.getMessage());
         }
     }
 
@@ -101,7 +101,7 @@ public class RedisUtil {
         try {
             return key == null ? null : (String) redisTemplate.opsForValue().get(key);
         } catch (Exception e) {
-            throw new JWTException("获取Redis键值get方法异常:key=" + key + " cause=" + e.getMessage());
+            throw new CustomException("获取Redis键值get方法异常:key=" + key + " cause=" + e.getMessage());
         }
     }
 
@@ -117,7 +117,7 @@ public class RedisUtil {
             redisTemplate.opsForValue().set(key, value);
             return true;
         } catch (Exception e) {
-            throw new JWTException("设置Redis键值set方法异常:key=" + key + " cause=" + e.getMessage());
+            throw new CustomException("设置Redis键值set方法异常:key=" + key + " cause=" + e.getMessage());
         }
     }
 
@@ -138,7 +138,7 @@ public class RedisUtil {
             }
             return true;
         } catch (Exception e) {
-            throw new JWTException("设置Redis键值过期时间set方法异常:key=" + key + " cause=" + e.getMessage());
+            throw new CustomException("设置Redis键值过期时间set方法异常:key=" + key + " cause=" + e.getMessage());
         }
     }
 

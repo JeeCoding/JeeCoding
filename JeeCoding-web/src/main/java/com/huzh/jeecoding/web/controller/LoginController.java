@@ -3,7 +3,7 @@ package com.huzh.jeecoding.web.controller;
 
 import com.huzh.jeecoding.common.api.RestResult;
 import com.huzh.jeecoding.common.constant.RedisConstant;
-import com.huzh.jeecoding.common.exception.UnauthorizedException;
+import com.huzh.jeecoding.common.exception.CustomUnauthorizedException;
 import com.huzh.jeecoding.common.util.JWTUtil;
 import com.huzh.jeecoding.common.util.PasswordUtil;
 import com.huzh.jeecoding.common.util.redis.RedisUtil;
@@ -49,7 +49,7 @@ public class LoginController {
         //情况1：根据用户信息查询，该用户不存在
         User user = userService.getUserByName(username);
         if (user == null) {
-            throw new UnauthorizedException("该帐号不存在(The account does not exist.)");
+            throw new CustomUnauthorizedException("该帐号不存在(The account does not exist.)");
         }
 
         System.out.println(PasswordUtil.getEncryptedPwd(password));
@@ -68,7 +68,7 @@ public class LoginController {
             response.setHeader("Access-Control-Expose-Headers", "Authorization");
             return RestResult.success(token, "登录成功(Login Success.)");
         } else {
-            throw new UnauthorizedException("帐号或密码错误(Account or Password Error.)");
+            throw new CustomUnauthorizedException("帐号或密码错误(Account or Password Error.)");
         }
     }
 }
