@@ -15,7 +15,6 @@ import org.apache.shiro.web.filter.authc.BasicHttpAuthenticationFilter;
 import org.apache.shiro.web.util.WebUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.context.annotation.Configuration;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.RequestMethod;
 
@@ -31,7 +30,6 @@ import java.io.PrintWriter;
  *
  * @author huzh
  */
-@Configuration
 @Slf4j
 public class JWTFilter extends BasicHttpAuthenticationFilter {
 

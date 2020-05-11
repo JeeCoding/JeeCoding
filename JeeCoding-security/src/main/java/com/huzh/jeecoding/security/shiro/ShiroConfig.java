@@ -10,6 +10,7 @@ import org.apache.shiro.spring.security.interceptor.AuthorizationAttributeSource
 import org.apache.shiro.spring.web.ShiroFilterFactoryBean;
 import org.apache.shiro.web.mgt.DefaultWebSecurityManager;
 import org.springframework.aop.framework.autoproxy.DefaultAdvisorAutoProxyCreator;
+import org.springframework.boot.web.servlet.FilterRegistrationBean;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.DependsOn;
@@ -28,6 +29,13 @@ import java.util.Map;
 @Configuration
 public class ShiroConfig {
 
+    /**
+     * 自定义realm，实现登录授权流程
+     */
+    @Bean
+    public Realm authRealm() {
+        return new MyShiroRealm();
+    }
 
     /**
      * 配置securityManager 管理subject（默认）,并把自定义realm交由manager
@@ -46,15 +54,24 @@ public class ShiroConfig {
     }
 
     /**
-     * 拦截链
+     * 注入bean，此处应注意：如不在此注册，在filter中将无法正常注入bean
+     */
+    @Bean("jwtFilter")
+    public JWTFilter jwtFilterBean() {
+        return new JWTFilter();
+    }
+
+    /**
+     * 让filter仍然通过注入的方式让spring进行管理，同时又不会被spring默认注册；
+     *
+     * @param filter
+     * @return
      */
     @Bean
-    public ShiroFilterFactoryBean shiroFilterFactoryBean(DefaultSecurityManager securityManager) {
-        ShiroFilterFactoryBean shiroFilterFactoryBean = new ShiroFilterFactoryBean();
-        shiroFilterFactoryBean.setFilters(filterMap());
-        shiroFilterFactoryBean.setSecurityManager(securityManager);
-        shiroFilterFactoryBean.setFilterChainDefinitionMap(definitionMap());
-        return shiroFilterFactoryBean;
+    public FilterRegistrationBean registration(JWTFilter filter) {
+        FilterRegistrationBean registration = new FilterRegistrationBean(filter);
+        registration.setEnabled(false);
+        return registration;
     }
 
     /**
@@ -62,7 +79,7 @@ public class ShiroConfig {
      */
     private Map<String, Filter> filterMap() {
         Map<String, Filter> filterMap = new HashMap<>();
-        filterMap.put("jwt", new JWTFilter());
+        filterMap.put("jwt", jwtFilterBean());
         return filterMap;
     }
 
@@ -77,11 +94,15 @@ public class ShiroConfig {
     }
 
     /**
-     * 自定义realm，实现登录授权流程
+     * 拦截链
      */
     @Bean
-    public Realm authRealm() {
-        return new MyShiroRealm();
+    public ShiroFilterFactoryBean shiroFilterFactoryBean(DefaultSecurityManager securityManager) {
+        ShiroFilterFactoryBean shiroFilterFactoryBean = new ShiroFilterFactoryBean();
+        shiroFilterFactoryBean.setFilters(filterMap());
+        shiroFilterFactoryBean.setSecurityManager(securityManager);
+        shiroFilterFactoryBean.setFilterChainDefinitionMap(definitionMap());
+        return shiroFilterFactoryBean;
     }
 
     /**
