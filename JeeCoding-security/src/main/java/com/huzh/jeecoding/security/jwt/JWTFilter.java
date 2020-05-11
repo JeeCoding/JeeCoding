@@ -13,7 +13,6 @@ import com.huzh.jeecoding.common.util.redis.RedisUtil;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.shiro.web.filter.authc.BasicHttpAuthenticationFilter;
 import org.apache.shiro.web.util.WebUtils;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.RequestMethod;
@@ -35,9 +34,6 @@ public class JWTFilter extends BasicHttpAuthenticationFilter {
 
     @Value("${config.refreshToken-expireTime}")
     public String refreshTokenExpireTime;
-
-    @Autowired
-    private RedisUtil redisUtil;
 
     /**
      * 这里我们详细说明下为什么最终返回的都是true，即允许访问
@@ -144,15 +140,15 @@ public class JWTFilter extends BasicHttpAuthenticationFilter {
         // 获取当前Token的帐号信息
         String username = JWTUtil.getClaim(token, JWTConstant.USERNAME);
         // 判断Redis中RefreshToken是否存在
-        if (redisUtil.exists(RedisConstant.PREFIX_SHIRO_REFRESH_TOKEN + username)) {
+        if (RedisUtil.exists(RedisConstant.PREFIX_SHIRO_REFRESH_TOKEN + username)) {
             // Redis中RefreshToken还存在，获取RefreshToken的时间戳
-            String currentTimeMillisRedis = redisUtil.get(RedisConstant.PREFIX_SHIRO_REFRESH_TOKEN + username);
+            String currentTimeMillisRedis = RedisUtil.get(RedisConstant.PREFIX_SHIRO_REFRESH_TOKEN + username);
             // 获取当前AccessToken中的时间戳，与RefreshToken的时间戳对比，如果当前时间戳一致，进行AccessToken刷新
             if (JWTUtil.getClaim(token, JWTConstant.CURRENT_TIME_MILLIS).equals(currentTimeMillisRedis)) {
                 // 获取当前最新时间戳
                 String currentTimeMillis = String.valueOf(System.currentTimeMillis());
                 // 设置RefreshToken中的时间戳为当前最新时间戳，且刷新过期时间重新为30分钟过期(配置文件可配置refreshTokenExpireTime属性)
-                redisUtil.set(RedisConstant.PREFIX_SHIRO_REFRESH_TOKEN + username,
+                RedisUtil.set(RedisConstant.PREFIX_SHIRO_REFRESH_TOKEN + username,
                         currentTimeMillis, Integer.parseInt(refreshTokenExpireTime));
                 // 刷新AccessToken，设置时间戳为当前最新时间戳
                 token = JWTUtil.createToken(username, currentTimeMillis);

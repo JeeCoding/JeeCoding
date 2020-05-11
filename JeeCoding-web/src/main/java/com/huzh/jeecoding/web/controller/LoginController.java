@@ -35,8 +35,6 @@ public class LoginController {
     @Autowired
     private UserService userService;
 
-    @Autowired
-    private RedisUtil redisUtil;
 
     @ApiOperation(value = "用户登录", notes = "登录--不进行拦截")
     @PostMapping(value = "/login")
@@ -57,12 +55,12 @@ public class LoginController {
         System.out.println(PasswordUtil.getEncryptedPwd(password));
         if (PasswordUtil.validPasswd(password, user.getPassWord())) {
             // 清除可能存在的Shiro权限信息缓存
-            if (redisUtil.exists(RedisConstant.PREFIX_SHIRO_CACHE + username)) {
-                redisUtil.delete(RedisConstant.PREFIX_SHIRO_CACHE + username);
+            if (RedisUtil.exists(RedisConstant.PREFIX_SHIRO_CACHE + username)) {
+                RedisUtil.delete(RedisConstant.PREFIX_SHIRO_CACHE + username);
             }
             // 设置RefreshToken，时间戳为当前时间戳，直接设置即可(不用先删后设，会覆盖已有的RefreshToken)
             String currentTimeMillis = String.valueOf(System.currentTimeMillis());
-            redisUtil.set(RedisConstant.PREFIX_SHIRO_REFRESH_TOKEN + username, currentTimeMillis,
+            RedisUtil.set(RedisConstant.PREFIX_SHIRO_REFRESH_TOKEN + username, currentTimeMillis,
                     Integer.parseInt(refreshTokenExpireTime));
             // 从Header中Authorization返回AccessToken，时间戳为当前时间戳
             String token = JWTUtil.createToken(username, currentTimeMillis);

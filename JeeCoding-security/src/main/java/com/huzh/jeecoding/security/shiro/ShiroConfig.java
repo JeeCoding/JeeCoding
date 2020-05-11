@@ -1,6 +1,7 @@
 package com.huzh.jeecoding.security.shiro;
 
 import com.huzh.jeecoding.security.jwt.JWTFilter;
+import com.huzh.jeecoding.security.shiro.cache.CustomCacheManager;
 import org.apache.shiro.mgt.DefaultSecurityManager;
 import org.apache.shiro.mgt.DefaultSessionStorageEvaluator;
 import org.apache.shiro.mgt.DefaultSubjectDAO;
@@ -14,6 +15,7 @@ import org.springframework.boot.web.servlet.FilterRegistrationBean;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.DependsOn;
+import org.springframework.data.redis.core.RedisTemplate;
 
 import javax.servlet.Filter;
 import java.util.HashMap;
@@ -30,18 +32,10 @@ import java.util.Map;
 public class ShiroConfig {
 
     /**
-     * 自定义realm，实现登录授权流程
-     */
-    @Bean
-    public Realm authRealm() {
-        return new MyShiroRealm();
-    }
-
-    /**
      * 配置securityManager 管理subject（默认）,并把自定义realm交由manager
      */
-    @Bean
-    public DefaultSecurityManager securityManager() {
+    @Bean("securityManager")
+    public DefaultSecurityManager securityManager(RedisTemplate<String, Object> template) {
         DefaultWebSecurityManager securityManager = new DefaultWebSecurityManager();
         securityManager.setRealm(authRealm());
         //非web关闭sessionManager(官网有介绍)
@@ -50,7 +44,28 @@ public class ShiroConfig {
         storageEvaluator.setSessionStorageEnabled(false);
         defaultSubjectDAO.setSessionStorageEvaluator(storageEvaluator);
         securityManager.setSubjectDAO(defaultSubjectDAO);
+        securityManager.setCacheManager(new CustomCacheManager(template));
         return securityManager;
+    }
+
+    /**
+     * 自定义realm，实现登录授权流程
+     */
+    @Bean
+    public Realm authRealm() {
+        return new MyShiroRealm();
+    }
+
+    /**
+     * 拦截链
+     */
+    @Bean
+    public ShiroFilterFactoryBean shiroFilterFactoryBean(DefaultSecurityManager securityManager) {
+        ShiroFilterFactoryBean shiroFilterFactoryBean = new ShiroFilterFactoryBean();
+        shiroFilterFactoryBean.setFilters(filterMap());
+        shiroFilterFactoryBean.setSecurityManager(securityManager);
+        shiroFilterFactoryBean.setFilterChainDefinitionMap(definitionMap());
+        return shiroFilterFactoryBean;
     }
 
     /**
@@ -91,18 +106,6 @@ public class ShiroConfig {
         definitionMap.put("/login", "anon");
         definitionMap.put("/**", "jwt");
         return definitionMap;
-    }
-
-    /**
-     * 拦截链
-     */
-    @Bean
-    public ShiroFilterFactoryBean shiroFilterFactoryBean(DefaultSecurityManager securityManager) {
-        ShiroFilterFactoryBean shiroFilterFactoryBean = new ShiroFilterFactoryBean();
-        shiroFilterFactoryBean.setFilters(filterMap());
-        shiroFilterFactoryBean.setSecurityManager(securityManager);
-        shiroFilterFactoryBean.setFilterChainDefinitionMap(definitionMap());
-        return shiroFilterFactoryBean;
     }
 
     /**

@@ -35,9 +35,6 @@ public class MyShiroRealm extends AuthorizingRealm {
     @Autowired
     private UserService userService;
 
-    @Autowired
-    private RedisUtil redisUtil;
-
 
     /**
      * 设置realm支持的authenticationToken类型,必须重写此方法，不然会报错
@@ -76,9 +73,9 @@ public class MyShiroRealm extends AuthorizingRealm {
 
 
         // 开始认证，要AccessToken认证通过，且Redis中存在RefreshToken，且两个Token时间戳一致
-        if (JWTUtil.verify(token) && redisUtil.exists(RedisConstant.PREFIX_SHIRO_REFRESH_TOKEN + username)) {
+        if (JWTUtil.verify(token) && RedisUtil.exists(RedisConstant.PREFIX_SHIRO_REFRESH_TOKEN + username)) {
             // 获取RefreshToken的时间戳
-            String currentTimeMillisRedis = redisUtil.get(RedisConstant.PREFIX_SHIRO_REFRESH_TOKEN + username);
+            String currentTimeMillisRedis = RedisUtil.get(RedisConstant.PREFIX_SHIRO_REFRESH_TOKEN + username);
             // 获取AccessToken时间戳，与RefreshToken的时间戳对比
             if (JWTUtil.getClaim(token, JWTConstant.CURRENT_TIME_MILLIS).equals(currentTimeMillisRedis)) {
                 return new SimpleAuthenticationInfo(token, token, "userRealm");

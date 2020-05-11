@@ -29,7 +29,6 @@ spring:
     host: localhost
     port: 6379
     password:
-    timeout: 3000ms
     lettuce:
       pool:
         max-active: 8
@@ -57,3 +56,4 @@ config:
   refreshToken-expireTime: 1800
   # JWT认证加密私钥(Base64加密)
   encrypt-jwtKey: U0JBUElOENhspJrzkyNjQ1NA
+  shiro-cache-expireTime: 600
