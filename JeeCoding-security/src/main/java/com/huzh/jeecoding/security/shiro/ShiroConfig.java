@@ -22,11 +22,9 @@ import java.util.HashMap;
 import java.util.Map;
 
 /**
- * @ClassName ShiroConfig
- * @Description TODO
- * @Date 2020/3/19 17:07
- * @Author huzh
- * @Version 1.0
+ * @author huzh
+ * @description: Shiro配置类
+ * @date 2020/5/7 20:28
  */
 @Configuration
 public class ShiroConfig {

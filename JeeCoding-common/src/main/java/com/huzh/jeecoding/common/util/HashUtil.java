@@ -6,7 +6,7 @@ import java.security.SecureRandom;
 
 /**
  * @author huzh
- * @description: 消息摘要算法, md5和sha-1
+ * @description: 消息摘要算法, md5和sha-1,用于密码加密解密
  * @date 2020/5/8 13:57
  */
 public class HashUtil {

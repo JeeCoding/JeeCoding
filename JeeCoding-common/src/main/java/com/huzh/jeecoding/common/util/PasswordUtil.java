@@ -5,7 +5,7 @@ import java.util.Arrays;
 
 /**
  * @author huzh
- * @description:
+ * @description: 密码加密解密工具类
  * @date 2020/5/8 13:59
  */
 public class PasswordUtil {

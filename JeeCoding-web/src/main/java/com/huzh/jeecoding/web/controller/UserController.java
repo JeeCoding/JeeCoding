@@ -14,11 +14,9 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
 
 /**
- * @ClassName UserController
- * @Description TODO
- * @Date 2020/3/17 15:51
- * @Author huzh
- * @Version 1.0
+ * @author huzh
+ * @description: 用户
+ * @date 2020/5/7 20:28
  */
 @Api(tags = "UserController", description = "用户管理")
 @RestController
@@ -32,9 +30,9 @@ public class UserController {
     @RequestMapping(value = "/list", method = RequestMethod.GET)
     @ResponseBody
     public RestResult findAll(@RequestParam(value = "pageNum", defaultValue = "1")
-                                @ApiParam("页码") Integer pageNum,
+                              @ApiParam("页码") Integer pageNum,
                               @RequestParam(value = "pageSize", defaultValue = "2")
-                                @ApiParam("每页数量") Integer pageSize) {
+                              @ApiParam("每页数量") Integer pageSize) {
         PageHelper.startPage(pageNum, pageSize);
         return RestResult.success(userService.getPage());
     }

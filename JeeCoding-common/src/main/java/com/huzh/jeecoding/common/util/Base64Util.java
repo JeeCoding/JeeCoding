@@ -5,7 +5,7 @@ import java.util.Base64;
 
 /**
  * @author huzh
- * @description:
+ * @description: 用于token转码
  * @date 2020/5/8 19:33
  */
 public class Base64Util {

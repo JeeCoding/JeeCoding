@@ -21,13 +21,10 @@ import org.apache.shiro.subject.PrincipalCollection;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.util.StringUtils;
 
-
 /**
- * @ClassName MyShiroRealm
- * @Description TODO
- * @Date 2020/3/19 17:06
- * @Author huzh
- * @Version 1.0
+ * @author huzh
+ * @description: 自定义Realm
+ * @date 2020/5/7 20:28
  */
 @Slf4j
 public class MyShiroRealm extends AuthorizingRealm {
