@@ -19,12 +19,13 @@ import java.util.concurrent.TimeUnit;
  */
 public class CustomCache<K, V> implements Cache<K, V> {
 
-    private String shiroCacheExpireTime = "600";
+    private String shiroCacheExpireTime;
 
     private RedisTemplate redisTemplate;
 
-    public CustomCache(RedisTemplate redisTemplate) {
+    public CustomCache(RedisTemplate redisTemplate, String shiroCacheExpireTime) {
         this.redisTemplate = redisTemplate;
+        this.shiroCacheExpireTime = shiroCacheExpireTime;
     }
 
     /**

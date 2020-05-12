@@ -54,7 +54,6 @@ public class LoginController {
             throw new CustomUnauthorizedException("该帐号不存在(The account does not exist.)");
         }
 
-        System.out.println(PasswordUtil.getEncryptedPwd(password));
         if (PasswordUtil.validPasswd(password, user.getPassWord())) {
             // 清除可能存在的Shiro权限信息缓存
             if (RedisUtil.exists(RedisConstant.PREFIX_SHIRO_CACHE + username)) {

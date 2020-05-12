@@ -12,14 +12,17 @@ import org.springframework.data.redis.core.RedisTemplate;
  */
 public class CustomCacheManager implements CacheManager {
 
+    private String shiroCacheExpireTime;
     private RedisTemplate<String, Object> redisTemplate;
 
-    public CustomCacheManager(RedisTemplate redisTemplate) {
+
+    public CustomCacheManager(RedisTemplate redisTemplate,String shiroCacheExpireTime) {
         this.redisTemplate = redisTemplate;
+        this.shiroCacheExpireTime = shiroCacheExpireTime;
     }
 
     @Override
     public <K, V> Cache<K, V> getCache(String s) throws CacheException {
-        return new CustomCache<K, V>(redisTemplate);
+        return new CustomCache<K, V>(redisTemplate,shiroCacheExpireTime);
     }
 }

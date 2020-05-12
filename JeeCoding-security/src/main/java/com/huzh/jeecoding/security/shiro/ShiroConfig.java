@@ -11,6 +11,8 @@ import org.apache.shiro.spring.security.interceptor.AuthorizationAttributeSource
 import org.apache.shiro.spring.web.ShiroFilterFactoryBean;
 import org.apache.shiro.web.mgt.DefaultWebSecurityManager;
 import org.springframework.aop.framework.autoproxy.DefaultAdvisorAutoProxyCreator;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.web.servlet.FilterRegistrationBean;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -29,11 +31,17 @@ import java.util.Map;
 @Configuration
 public class ShiroConfig {
 
+    @Value("${config.shiro-cache-expireTime}")
+    private String shiroCacheExpireTime;
+
+    @Autowired
+    private RedisTemplate<String, Object> template;
+
     /**
      * 配置securityManager 管理subject（默认）,并把自定义realm交由manager
      */
     @Bean("securityManager")
-    public DefaultSecurityManager securityManager(RedisTemplate<String, Object> template) {
+    public DefaultSecurityManager securityManager() {
         DefaultWebSecurityManager securityManager = new DefaultWebSecurityManager();
         securityManager.setRealm(authRealm());
         //非web关闭sessionManager(官网有介绍)
@@ -42,7 +50,7 @@ public class ShiroConfig {
         storageEvaluator.setSessionStorageEnabled(false);
         defaultSubjectDAO.setSessionStorageEvaluator(storageEvaluator);
         securityManager.setSubjectDAO(defaultSubjectDAO);
-        securityManager.setCacheManager(new CustomCacheManager(template));
+        securityManager.setCacheManager(new CustomCacheManager(template, shiroCacheExpireTime));
         return securityManager;
     }
 
@@ -75,7 +83,9 @@ public class ShiroConfig {
     }
 
     /**
-     * 让filter仍然通过注入的方式让spring进行管理，同时又不会被spring默认注册；
+     * TODO 坑
+     * 让filter仍然通过注入的方式让spring进行管理，同时又不会被spring默认注册.
+     * 用于解决filter总是拦截login请求
      *
      * @param filter
      * @return
@@ -118,8 +128,15 @@ public class ShiroConfig {
         return defaultAdvisorAutoProxyCreator;
     }
 
+    /**
+     * TODO 坑
+     * 将生命周期处理器LifecycleBeanPostProcessor 设为静态.
+     * 可以使用@value和@Autowired注入属性
+     *
+     * @return
+     */
     @Bean
-    public LifecycleBeanPostProcessor lifecycleBeanPostProcessor() {
+    public static LifecycleBeanPostProcessor lifecycleBeanPostProcessor() {
         return new LifecycleBeanPostProcessor();
     }
 
