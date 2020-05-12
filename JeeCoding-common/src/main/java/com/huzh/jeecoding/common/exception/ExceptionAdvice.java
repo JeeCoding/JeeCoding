@@ -64,7 +64,7 @@ public class ExceptionAdvice {
     public RestResult validException(BindException e) {
         List<FieldError> fieldErrors = e.getBindingResult().getFieldErrors();
         Map<String, Object> error = this.getValidError(fieldErrors);
-        return RestResult.failed(ResultCode.VALIDATE_FAILED, error.get("errorMsg").toString());
+        return RestResult.validateFailed(error.get("errorMsg").toString());
     }
 
     /**
@@ -75,7 +75,7 @@ public class ExceptionAdvice {
     public RestResult validException(MethodArgumentNotValidException e) {
         List<FieldError> fieldErrors = e.getBindingResult().getFieldErrors();
         Map<String, Object> error = this.getValidError(fieldErrors);
-        return RestResult.failed(ResultCode.VALIDATE_FAILED, error.get("errorMsg").toString());
+        return RestResult.validateFailed(error.get("errorMsg").toString());
     }
 
     /**
